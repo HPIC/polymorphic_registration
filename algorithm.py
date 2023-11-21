@@ -1,4 +1,4 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 from typing import Dict, Type
 
 
@@ -9,6 +9,7 @@ class Tensor:
 class IAlgorithm(ABC):
     _all_algorithms: Dict[str, Type["IAlgorithm"]] = {}
 
+    @abstractmethod
     def forward(self, x: Tensor) -> Tensor:
         ...
 
