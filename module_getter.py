@@ -1,5 +1,6 @@
 import inspect
 import importlib
+import warnings
 from pathlib import Path
 from typing import Generic, TypeVar, Type, Dict, List
 
@@ -24,8 +25,14 @@ class ModuleGetter(Generic[T]):
             module = importlib.import_module(f"{module_name}.{f.stem}")
 
             for name, cls in inspect.getmembers(module):
-                if inspect.isclass(cls) and issubclass(cls, type):
+                if inspect.isclass(cls) and issubclass(cls, type) and cls is not type:
                     self._dict[name] = cls
+
+        if len(self._dict) == 0:
+            warnings.warn(
+                f"No defined classes of {type.__name__} found in '{module_name}'.",
+                UserWarning,
+            )
 
     def get(self, name: str, **kwargs) -> T:
         cls = self._dict.get(name)
